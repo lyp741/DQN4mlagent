@@ -106,11 +106,14 @@ class DQNAgent():
         Q_expected = Q_expected_current.gather(1, actions.unsqueeze(1)).squeeze(1)
 
         # Get max predicted Q values (for next states) from target model
-        Q_targets_next = self.target_net(next_states).detach().max(1)[0]
+        # Q_targets_next = self.target_net(next_states).detach().max(1)[0]
         
-        # Compute Q targets for current states 
-        Q_targets = rewards.squeeze() + (self.gamma * Q_targets_next * (1 - dones))
+        # # Compute Q targets for current states 
+        # Q_targets = rewards.squeeze() + (self.gamma * Q_targets_next * (1 - dones))
         
+        argmaxA = torch.max(self.policy_net(next_states), dim=1)[1]
+        targetQ = self.target_net(next_states).detach().gather(1, argmaxA.unsqueeze(1)).squeeze(1)
+        Q_targets = rewards.squeeze() + (self.gamma * targetQ * (1 - dones))
         # Compute loss
         loss = F.mse_loss(Q_expected, Q_targets)
 
