@@ -39,10 +39,10 @@ class MLA_Wrapper():
         groupId = decisionStep.group_id
         self.groupId = groupId
         self.num_rolls = np.unique(groupId).shape[0]
-        self.num_rolls = len(groupId)
+        # self.num_rolls = len(groupId)
         print("num rolls: ", self.num_rolls)
         self.num_agents = int(len(groupId) / self.num_rolls)
-        self.num_agents = 1
+        # self.num_agents = 1
         print("num agents: ", self.num_agents)
         obs = np.zeros((self.num_rolls, self.num_agents)+obs_raw.shape[1:])
         self.obs_shape = obs_raw.shape[1:]
@@ -107,10 +107,10 @@ class MLA_Wrapper():
             agent = agent_id % self.num_agents
             # roll = agent_id
             # agent = 0
-            obs[roll, agent] = np.concatenate((ds.obs[0], ds.obs[1]))
+            obs[roll, agent] = ds.obs[0]
             rewards[roll, agent] = ds.reward
             dones[roll, agent] = False
-            self.infos[roll][agent]['individual_reward'] = ds.reward
+            self.infos[roll][agent]['individual_reward'] = ds.group_reward
             masks.append((roll, agent))
 
         for agent_id in terminalStep:
@@ -119,9 +119,9 @@ class MLA_Wrapper():
             agent = agent_id % self.num_agents
             # roll = agent_id
             # agent = 0
-            obs[roll, agent] = np.concatenate((ts.obs[0], ts.obs[1]))
-            rewards[roll, agent] = ts.reward
-            dones[roll, agent] = True
+            obs[roll, agent] = ts.obs[0]
+            rewards[roll, agent] = ts.group_reward
+            dones[roll, agent] = not ts.interrupted
             masks.append((roll, agent))
 
 

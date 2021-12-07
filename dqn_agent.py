@@ -10,7 +10,7 @@ from buffer import ReplayBuffer
 from model import DQNLinear
 from cnn import CNN
 class DQNAgent():
-    def __init__(self, input_shape, action_size, buffer_size, batch_size, gamma, lr, tau, update_every, device):
+    def __init__(self, input_shape, action_size, buffer_size, batch_size, gamma, lr, tau, update_every, device, rolls, agents):
         """Initialize an Agent object.
         
         Params
@@ -35,12 +35,12 @@ class DQNAgent():
         self.tau = tau
         self.device = device
      # Q-Network
-        self.policy_net = DQNLinear(input_shape, action_size).to(self.device)
-        self.target_net = DQNLinear(input_shape, action_size).to(self.device)
+        self.policy_net = CNN(input_shape, action_size).to(self.device)
+        self.target_net = CNN(input_shape, action_size).to(self.device)
         self.optimizer = optim.Adam(self.policy_net.parameters(), lr=self.lr)
         
         # Replay memory
-        self.memory = ReplayBuffer(self.buffer_size, self.batch_size, self.device)
+        self.memory = ReplayBuffer(self.buffer_size, self.batch_size, self.device, rolls, agents)
         
         self.t_step = 0
 

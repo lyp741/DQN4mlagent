@@ -11,7 +11,7 @@ import torch
 from mlagents_envs.environment import UnityEnvironment
 from dqn_agent import DQNAgent
 from model import DQNLinear
-from mla_wrapper_sa import MLA_Wrapper
+from mla_wrapper_ma import MLA_Wrapper
 from cnn import CNN
 
 env = MLA_Wrapper()
@@ -35,7 +35,7 @@ LR = 1e-3              # learning rate
 TAU = 1e-2             # for soft update of target parameters
 UPDATE_EVERY = 5       # how often to update the network 
 
-agent = DQNAgent(STATE_SIZE, ACTION_SIZE, BUFFER_SIZE, BATCH_SIZE, GAMMA, LR, TAU, UPDATE_EVERY, device)
+agent = DQNAgent(STATE_SIZE, ACTION_SIZE, BUFFER_SIZE, BATCH_SIZE, GAMMA, LR, TAU, UPDATE_EVERY, device, env.num_rolls, env.num_agents)
 # agent = CNN(STATE_SIZE, output_size=ACTION_SIZE)
 EPS_START = 0.99       # starting value of epsilon
 EPS_END = 0.01         # Ending value of epsilon
