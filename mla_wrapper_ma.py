@@ -121,7 +121,7 @@ class MLA_Wrapper():
             # agent = 0
             obs[roll, agent] = ts.obs[0]
             rewards[roll, agent] = ts.group_reward
-            dones[roll, agent] = not ts.interrupted
+            dones[roll, agent] = True
             masks.append((roll, agent))
 
 

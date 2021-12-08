@@ -86,10 +86,10 @@ def train(n_episodes, scores_average_window, benchmark_reward):
         # plot_result(scores)
         print('\rEpisode {}\tAverage Score: {:.2f}\tEplision: {:.3f}'.format(i_episode, np.mean(scores_window), eps))
         
-        if float(np.mean(scores_window)) >= BENCHMARK_REWARD:
-            agent.save_model("basic_solved.pth", scores)
-            print("Yah Environment is solved :)")
-            break
+        # if float(np.mean(scores_window)) >= BENCHMARK_REWARD:
+        #     agent.save_model("basic_solved.pth", scores)
+        #     print("Yah Environment is solved :)")
+        #     break
     
     return scores
 BENCHMARK_REWARD = 0.9300

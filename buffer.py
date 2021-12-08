@@ -14,7 +14,7 @@ class ReplayBuffer:
             device (string): GPU or CPU
         """
 
-        self.memory = [[deque(maxlen=buffer_size) for agent in range(agents)] for roll in range(rolls)]
+        self.memory = [[deque(maxlen=int(buffer_size/rolls/agents)) for agent in range(agents)] for roll in range(rolls)]
         self.batch_size = batch_size
         self.experience = namedtuple("Experience", field_names=["state", "action", "reward", "next_state", "done"])
         self.device = device
