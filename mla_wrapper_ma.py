@@ -108,7 +108,7 @@ class MLA_Wrapper():
             # roll = agent_id
             # agent = 0
             obs[roll, agent] = ds.obs[0]
-            rewards[roll, agent] = ds.reward
+            rewards[roll, agent] = ds.reward + ds.group_reward
             dones[roll, agent] = False
             self.infos[roll][agent]['individual_reward'] = ds.reward
             masks.append((roll, agent))
@@ -120,8 +120,8 @@ class MLA_Wrapper():
             # roll = agent_id
             # agent = 0
             obs[roll, agent] = ts.obs[0]
-            rewards[roll, agent] = ts.reward
-            dones[roll, agent] = True
+            rewards[roll, agent] = ts.reward + ts.group_reward
+            dones[roll, agent] = not ts.interrupted
             masks.append((roll, agent))
 
 
