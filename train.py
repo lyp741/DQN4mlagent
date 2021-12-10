@@ -39,7 +39,7 @@ agent = DQNAgent(STATE_SIZE, ACTION_SIZE, BUFFER_SIZE, BATCH_SIZE, GAMMA, LR, TA
 # agent = CNN(STATE_SIZE, output_size=ACTION_SIZE)
 EPS_START = 0.99       # starting value of epsilon
 EPS_END = 0.01         # Ending value of epsilon
-EPS_DECAY = 200       # Rate by which epsilon to be decayed
+EPS_DECAY = 30       # Rate by which epsilon to be decayed
 
 epsilon_by_epsiode = lambda frame_idx: EPS_END + (EPS_START - EPS_END) * math.exp(-1. * frame_idx / EPS_DECAY)
 

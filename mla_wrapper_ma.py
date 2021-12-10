@@ -110,7 +110,7 @@ class MLA_Wrapper():
             obs[roll, agent] = ds.obs[0]
             rewards[roll, agent] = ds.reward
             dones[roll, agent] = False
-            self.infos[roll][agent]['individual_reward'] = ds.group_reward
+            self.infos[roll][agent]['individual_reward'] = ds.reward
             masks.append((roll, agent))
 
         for agent_id in terminalStep:
@@ -120,7 +120,7 @@ class MLA_Wrapper():
             # roll = agent_id
             # agent = 0
             obs[roll, agent] = ts.obs[0]
-            rewards[roll, agent] = ts.group_reward
+            rewards[roll, agent] = ts.reward
             dones[roll, agent] = True
             masks.append((roll, agent))
 
