@@ -7,9 +7,10 @@ class CNN(torch.nn.Module):
   def __init__(
     self,
     input_shape: Tuple[int, int, int],
+    vec_shape=None,
     encoding_size=64,
     output_size=7,
-    vec_shape=None
+    
   ):
     """
     Creates a neural network that takes as input a batch of images (3

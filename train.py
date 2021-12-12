@@ -25,8 +25,9 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # print("Device: ", device)
 # print("Number of observations : ", len(spec.observation_specs))
 # print(f"There are {spec.action_spec.discrete_size} discrete actions")
-
-STATE_SIZE = env.obs_shape
+vis_obs_shape = env.vis_obs_shape
+vec_obs_shape = env.vec_obs_shape
+# STATE_SIZE = env.v
 ACTION_SIZE = env.action_space[0].n
 GAMMA = 0.99           # discount factor
 BUFFER_SIZE = int(1e5)      # replay buffer size
@@ -35,7 +36,7 @@ LR = 1e-3              # learning rate
 TAU = 1e-2             # for soft update of target parameters
 UPDATE_EVERY = 5       # how often to update the network 
 
-agent = DQNAgent(STATE_SIZE, ACTION_SIZE, BUFFER_SIZE, BATCH_SIZE, GAMMA, LR, TAU, UPDATE_EVERY, device, env.num_rolls, env.num_agents)
+agent = DQNAgent(vis_obs_shape, vec_obs_shape , ACTION_SIZE, BUFFER_SIZE, BATCH_SIZE, GAMMA, LR, TAU, UPDATE_EVERY, device, env.num_rolls, env.num_agents)
 # agent = CNN(STATE_SIZE, output_size=ACTION_SIZE)
 EPS_START = 0.99       # starting value of epsilon
 EPS_END = 0.01         # Ending value of epsilon

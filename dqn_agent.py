@@ -10,7 +10,7 @@ from buffer import ReplayBuffer
 from model import DQNLinear
 from cnn import CNN
 class DQNAgent():
-    def __init__(self, input_shape, action_size, buffer_size, batch_size, gamma, lr, tau, update_every, device, rolls, agents):
+    def __init__(self, vis_shape, vec_shape, action_size, buffer_size, batch_size, gamma, lr, tau, update_every, device, rolls, agents):
         """Initialize an Agent object.
         
         Params
@@ -25,7 +25,7 @@ class DQNAgent():
             update_every (int): how often to update the network
             device(string): Use Gpu or CPU
         """
-        self.input_shape = input_shape
+        self.input_shape = vis_shape
         self.action_size = action_size
         self.buffer_size = buffer_size
         self.batch_size = batch_size
@@ -35,8 +35,8 @@ class DQNAgent():
         self.tau = tau
         self.device = device
      # Q-Network
-        self.policy_net = CNN(input_shape, action_size).to(self.device)
-        self.target_net = CNN(input_shape, action_size).to(self.device)
+        self.policy_net = CNN(vis_shape, vec_shape, action_size).to(self.device)
+        self.target_net = CNN(vis_shape, vec_shape, action_size).to(self.device)
         self.optimizer = optim.Adam(self.policy_net.parameters(), lr=self.lr)
         
         # Replay memory
@@ -59,13 +59,15 @@ class DQNAgent():
                 self.learn(experiences)
                 
     def act(self, state, eps=0.01):
-        states=torch.from_numpy(state).to(self.device)
-        actions = torch.zeros(states.shape[:2])
+        vis_obs = torch.from_numpy(state[0]).to(self.device)
+        vec_obs = torch.from_numpy(state[1]).to(self.device)
+        actions = torch.zeros(vis_obs.shape[:2])
         self.policy_net.eval()
         with torch.no_grad():
-            for i in range(len(state)):
-                state = states[i]
-                action_values = self.policy_net(state)
+            for i in range(len(state[0])):
+                vis = vis_obs[i]
+                vec = vec_obs[i]
+                action_values = self.policy_net(vis, vec)
                 action = torch.max(action_values, dim=1)[1]
                 actions[i] = action
 
@@ -84,8 +86,7 @@ class DQNAgent():
         return actions.cpu().data.numpy()
         
     def learn(self, experiences):
-        states_all, actions_all, rewards_all, next_states_all, dones_all = experiences
-        states, actions, rewards, next_states, dones = experiences
+        (vis_obs, vec_obs), actions, rewards, (next_states_vis, next_states_vec), dones = experiences
         # shapes = experiences[0].shape
         # n_rolls = shapes[1]
         # n_agents = shapes[2]
@@ -102,11 +103,11 @@ class DQNAgent():
         #         dones = dones_all[:, random_r, random_a]
 
             # Get expected Q values from policy model
-        Q_expected_current = self.policy_net(states)
+        Q_expected_current = self.policy_net(vis_obs, vec_obs)
         Q_expected = Q_expected_current.gather(1, actions.unsqueeze(1)).squeeze(1)
 
         # Get max predicted Q values (for next states) from target model
-        Q_targets_next = self.target_net(next_states).detach().max(1)[0]
+        Q_targets_next = self.target_net(next_states_vis, next_states_vec).detach().max(1)[0]
         
         # Compute Q targets for current states 
         Q_targets = rewards.squeeze() + (self.gamma * Q_targets_next * (1 - dones))

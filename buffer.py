@@ -25,7 +25,9 @@ class ReplayBuffer:
         for i in masks:
             roll = i[0]
             agent = i[1]
-            e = self.experience(state[roll, agent], action[roll, agent], reward[roll, agent], next_state[roll, agent], done[roll, agent])
+            vis_obs = state[0]
+            vec_obs = state[1]
+            e = self.experience((vis_obs[roll, agent], vec_obs[roll, agent]), action[roll, agent], reward[roll, agent], (next_state[0][roll, agent], next_state[1][roll, agent]), done[roll, agent])
             self.memory[roll][agent].append(e)
     
     def sample(self):
@@ -34,13 +36,16 @@ class ReplayBuffer:
             for j in range(self.agents):
                 cur_experiences = random.sample(self.memory[i][j],k=self.batch_size)
                 experiences += cur_experiences
-        states = torch.from_numpy(np.array([e.state for e in experiences if e is not None])).float().to(self.device)
+        vis_obs = torch.from_numpy(np.array([e.state[0] for e in experiences if e is not None])).float().to(self.device)
+        vec_obs = torch.from_numpy(np.array([e.state[1] for e in experiences if e is not None])).float().to(self.device)
         actions = torch.from_numpy(np.array([e.action for e in experiences if e is not None])).long().to(self.device)
         rewards = torch.from_numpy(np.array([e.reward for e in experiences if e is not None])).float().to(self.device)
-        next_states = torch.from_numpy(np.array([e.next_state for e in experiences if e is not None])).float().to(self.device)
+        next_vis_states = torch.from_numpy(np.array([e.next_state[0] for e in experiences if e is not None])).float().to(self.device)
+        next_vec_states = torch.from_numpy(np.array([e.next_state[1] for e in experiences if e is not None])).float().to(self.device)
+
         dones = torch.from_numpy(np.array([e.done for e in experiences if e is not None]).astype(np.uint8)).float().to(self.device)
 
-        return (states, actions, rewards, next_states, dones)
+        return ((vis_obs, vec_obs), actions, rewards, (next_vis_states, next_vec_states), dones)
 
     def __len__(self):
         return len(self.memory)
