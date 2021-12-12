@@ -11,7 +11,7 @@ import torch
 from mlagents_envs.environment import UnityEnvironment
 from dqn_agent import DQNAgent
 from model import DQNLinear
-from mla_wrapper_ma_vec import MLA_Wrapper
+from mla_wrapper_ma_cnn import MLA_Wrapper
 from cnn import CNN
 
 env = MLA_Wrapper()

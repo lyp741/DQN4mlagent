@@ -8,7 +8,8 @@ class CNN(torch.nn.Module):
     self,
     input_shape: Tuple[int, int, int],
     encoding_size=64,
-    output_size=7
+    output_size=7,
+    vec_shape=None
   ):
     """
     Creates a neural network that takes as input a batch of images (3
@@ -19,20 +20,24 @@ class CNN(torch.nn.Module):
     height = input_shape[0]
     width = input_shape[1]
     initial_channels = input_shape[2]
+    self.vec_shape = vec_shape
     conv_1_hw = self.conv_output_shape((height, width), 8, 4)
     conv_2_hw = self.conv_output_shape(conv_1_hw, 4, 2)
     self.final_flat = conv_2_hw[0] * conv_2_hw[1] * 32
     self.conv1 = torch.nn.Conv2d(initial_channels, 16, [8, 8], [4, 4])
     self.conv2 = torch.nn.Conv2d(16, 32, [4, 4], [2, 2])
-    self.dense1 = torch.nn.Linear(self.final_flat, encoding_size)
+    self.dense1 = torch.nn.Linear(self.final_flat+self.vec_shape, encoding_size)
     self.dense2 = torch.nn.Linear(encoding_size, output_size)
 
-  def forward(self, visual_obs: torch.tensor):
+  def forward(self, visual_obs: torch.tensor, vec_obs: torch.tensor) -> torch.tensor:
     visual_obs = visual_obs.float()
+    vec_obs = vec_obs.float()
     visual_obs = visual_obs.permute(0, 3, 1, 2)
     conv_1 = torch.relu(self.conv1(visual_obs))
     conv_2 = torch.relu(self.conv2(conv_1))
-    hidden = self.dense1(conv_2.reshape([-1, self.final_flat]))
+    conv_out = conv_2.reshape([-1, self.final_flat])
+    concat = torch.cat((conv_out, vec_obs), 1)
+    hidden = self.dense1(concat)
     hidden = torch.relu(hidden)
     hidden = self.dense2(hidden)
     return hidden

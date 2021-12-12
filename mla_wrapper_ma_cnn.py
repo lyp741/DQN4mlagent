@@ -35,7 +35,8 @@ class MLA_Wrapper():
         decisionStep, terminalStep = self.env.get_steps(self.behavior_name)
         self.decisionStep = decisionStep
         self.terminalStep = terminalStep
-        obs_raw = np.concatenate((decisionStep.obs[0],decisionStep.obs[1]),1) # 2 obs, 0 is grid sensor. (agents*platform, 20, 20, 7)
+        vis_obs_raw = decisionStep.obs[0] # 2 obs, 0 is grid sensor. (agents*platform, 20, 20, 7)
+        vec_obs_raw = decisionStep.obs[1] # 2 obs, 1 is vector. (agents*platform, 10)
         groupId = decisionStep.group_id
         self.groupId = groupId
         self.num_rolls = np.unique(groupId).shape[0]
@@ -44,8 +45,10 @@ class MLA_Wrapper():
         self.num_agents = int(len(groupId) / self.num_rolls)
         # self.num_agents = 1
         print("num agents: ", self.num_agents)
-        obs = np.zeros((self.num_rolls, self.num_agents)+obs_raw.shape[1:])
-        self.obs_shape = obs_raw.shape[1:]
+        vis_obs = np.zeros((self.num_rolls, self.num_agents)+vis_obs_raw.shape[1:])
+        vec_obs = np.zeros((self.num_rolls, self.num_agents)+vec_obs_raw.shape[1:])
+        self.vis_obs_shape = vis_obs_raw.shape[1:]
+        self.vec_obs_shape = vec_obs_raw.shape[1:]
         reward = decisionStep.reward #(agents*platform,)
 
         rewards = np.zeros((self.num_rolls, self.num_agents, 1))

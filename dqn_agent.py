@@ -35,8 +35,8 @@ class DQNAgent():
         self.tau = tau
         self.device = device
      # Q-Network
-        self.policy_net = DQNLinear(input_shape, action_size).to(self.device)
-        self.target_net = DQNLinear(input_shape, action_size).to(self.device)
+        self.policy_net = CNN(input_shape, action_size).to(self.device)
+        self.target_net = CNN(input_shape, action_size).to(self.device)
         self.optimizer = optim.Adam(self.policy_net.parameters(), lr=self.lr)
         
         # Replay memory
