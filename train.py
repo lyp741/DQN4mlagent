@@ -16,6 +16,9 @@ from cnn import CNN
 
 env = MLA_Wrapper()
 
+
+
+
 env.reset()
 # behavior_name = list(env.behavior_specs)[0] 
 # spec = env.behavior_specs[behavior_name]
